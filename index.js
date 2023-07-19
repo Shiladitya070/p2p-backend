@@ -19,11 +19,14 @@ io.on("connection", (socket) => {
     Object.keys(rooms).map((roomId) => {
       rooms[roomId].users = rooms[roomId].users.filter((x) => x !== socket.id);
     });
+    console.log("user deleted", users[socket.id]);
     delete users[socket.id];
   });
 
   socket.on("join", (params) => {
     const roomId = params.roomId;
+    // socket.join(roomId.toString());
+    console.log("🎉🎉", roomId.toString());
     users[socket.id] = {
       roomId: roomId,
     };
@@ -36,6 +39,17 @@ io.on("connection", (socket) => {
     rooms[roomId].users.push(socket.id);
     console.log("🔉", rooms[roomId].users);
     console.log("user added to room " + roomId);
+  });
+  socket.on("message", (data) => {
+    let roomId = users[socket.id].roomId;
+    let otherUsers = rooms[roomId].users;
+    console.log("😒😒", users[socket.id].roomId);
+    console.log("😒", data);
+
+    otherUsers.forEach((otherUser) => {
+      console.log(otherUser);
+      io.to(otherUser).emit("message", { data });
+    });
   });
 
   socket.on("localDescription", (params) => {

@@ -41,15 +41,7 @@ io.on("connection", (socket) => {
     console.log("user added to room " + roomId);
   });
   socket.on("message", (data) => {
-    let roomId = users[socket.id].roomId;
-    let otherUsers = rooms[roomId].users;
-    console.log("😒😒", users[socket.id].roomId);
-    console.log("😒", data);
-
-    otherUsers.forEach((otherUser) => {
-      console.log(otherUser);
-      io.to(otherUser).emit("message", { data });
-    });
+    io.emit("message", data);
   });
 
   socket.on("localDescription", (params) => {
